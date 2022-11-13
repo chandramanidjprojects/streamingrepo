@@ -1,0 +1,18 @@
+<script>
+
+    $(function(){
+        $('.like').on('click',function(){
+           let elment=this
+           let id=$(this).attr('data-id')
+           $.ajax({
+               url:'{% url "likes" %}',
+               method:'GET',
+               data:{post_id:id},
+               success:function(data){
+                 $(elment).text('like'+' ' +data.count)
+               }
+
+           })
+        })
+    })
+</script>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'personalapp/css/bootstrap.min.css' %}">
+    <style>
+        #com_profile{
+            width: 30px;
+            height:30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container main">
+       {% for comment in comments   %}
+         <div class="row  mb-3 bg-secondary">
+             <div class="col">
+                <img src="{{comment.comment_by.profile.url}}" id='com_profile' class="rounded-circle"/>
+                <h6>{{comment.comment_by.username}}</h6>
+                <h6>{{comment.comment_text}}</h6>
+             </div>
+         </div>
+       {% endfor %}
+    </div>
+   <div  class="container fixed-bottom text-center mb-3">
+        <form>
+            {% csrf_token %}
+           <input type="text" name="" id="comment" placeholder="enter your comments here...">
+           <input type="button" value="send" id="send_comment">
+        </form>
+   </div>
+<script src="{% static 'personalapp/js/jquery.js' %}"></script>
+<script>
+    $(function(){
+        $('#send_comment').on('click',function(){
+           let text= $('#comment').val()
+           let csr=$("input[name='csrfmiddlewaretoken']").val()
+           let post_id='{{post_id}}'
+               
+           $.ajax({
+            url:"{% url 'comments' %}",
+            method:'POST',
+            data:{text:text,csrfmiddlewaretoken:csr,post_id:post_id} ,
+            success:function(data){
+                let html=`<div class="row  mb-3 bg-secondary">
+                             <div class="col">
+                                <img  src=${data.profile} id='com_profile' class='rounded-circle'/>
+                                <h6>${data.username}</h6>
+                                <h6>${data.text}</h6>
+                             </div>
+                    </div>`
+                $('.main').append(html)
+            }    
+           })     
+        })
+    })
+</script>
+</body>
+</html>
